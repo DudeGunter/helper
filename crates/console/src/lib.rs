@@ -1,10 +1,12 @@
 use bevy::prelude::*;
 
+mod ui;
+
 pub struct ConsolePlugin;
 
 impl Plugin for ConsolePlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, || info!("Console impl wip."));
+        app.add_systems(Startup, ui::create_ui);
     }
 }
 
