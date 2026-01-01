@@ -5,3 +5,10 @@ edition = "2024"
 
 [dependencies]
 bevy.workspace = true
+
+[dev-dependencies]
+purple = { path = "../purple" }
+
+[[example]]
+name = "basic"
+path = "examples/basic.rs"
