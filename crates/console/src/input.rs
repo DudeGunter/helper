@@ -41,12 +41,10 @@ pub struct SubmittedText {
 pub struct SelectedBox;
 
 pub fn select_text_input_box(trigger: On<Pointer<Over>>, mut commands: Commands) {
-    info!("Selected text input box");
     commands.entity(trigger.entity).insert(SelectedBox);
 }
 
 pub fn unselect_text_input_box(trigger: On<Pointer<Out>>, mut commands: Commands) {
-    info!("Unselected text input box");
     commands.entity(trigger.entity).remove::<SelectedBox>();
 }
 

@@ -21,7 +21,7 @@ pub fn create_ui(mut commands: Commands) {
             BorderRadius::all(px(5)),
             BorderColor::all(Color::srgba(0.4, 0.4, 0.4, 0.6)),
             DragData(Vec2::ZERO),
-            //GlobalZIndex(i32::MAX), // forever render ontop, I worry this isn't passed down to children
+            GlobalZIndex(i32::MAX), // forever render ontop, I worry this isn't passed down to children
             BackgroundColor(Color::BLACK.with_alpha(0.5)),
             children![text_input_box()],
         ))
