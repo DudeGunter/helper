@@ -1,24 +1,35 @@
+use crate::input::*;
 use bevy::prelude::*;
 
 #[derive(Component)]
 pub struct ConsoleUI;
 
+/// Needed to handle drag events
 #[derive(Component)]
 pub struct DragData(Vec2);
 
 pub fn create_ui(mut commands: Commands) {
+    let text_input_entity = commands
+        .spawn(text_input_box())
+        .observe(select_text_input_box)
+        .observe(unselect_text_input_box)
+        .id();
     commands
         .spawn((
             ConsoleUI,
             Node {
-                width: px(50),
-                height: px(50),
+                width: px(500),
+                height: px(250),
+                border: UiRect::all(px(5)),
                 ..default()
             },
+            BorderRadius::all(px(5)),
+            BorderColor::all(Color::srgba(0.4, 0.4, 0.4, 0.6)),
             DragData(Vec2::ZERO),
-            GlobalZIndex(i32::MAX), // forever render ontop
+            //GlobalZIndex(i32::MAX), // forever render ontop, I worry this isn't passed down to children
             BackgroundColor(Color::BLACK.with_alpha(0.5)),
         ))
+        .add_child(text_input_entity)
         .observe(
             |on_drag_start: On<Pointer<DragStart>>,
              mut drag_query: Query<&mut DragData>,
@@ -52,4 +63,17 @@ pub fn create_ui(mut commands: Commands) {
                 }
             },
         );
+}
+
+pub fn text_input_box() -> impl Bundle {
+    (
+        TextInputBox::default(),
+        Node {
+            width: percent(100),
+            height: px(24),
+            align_self: AlignSelf::End,
+            ..default()
+        },
+        BackgroundColor(Color::srgb(0.2, 0.2, 0.2)),
+    )
 }
