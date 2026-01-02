@@ -30,10 +30,9 @@ impl TextInputBox {
 }
 
 /// Text submitted from TextInputBox
-#[derive(EntityEvent, Clone, Debug)]
+#[derive(Event, Clone, Debug)]
 pub struct SubmittedText {
-    entity: Entity,
-    text: String,
+    pub text: String,
 }
 
 /// Marker component for selected text input boxes.
@@ -53,20 +52,19 @@ pub fn handle_selected_boxes(
     mut keyboard_input: MessageReader<KeyboardInput>,
     query: Query<(Entity, &TextInputBox, &mut Text), With<SelectedBox>>,
 ) {
-    if let Ok((entity, config, mut text)) = query.single_inner() {
+    if let Ok((_entity, config, mut text)) = query.single_inner() {
         for input in keyboard_input.read() {
             if !input.state.is_pressed() {
                 continue;
             }
             match (&input.logical_key, &input.text) {
                 (Key::Enter, _) => {
+                    commands.trigger(SubmittedText {
+                        text: text.0.clone(),
+                    });
                     if config.clear_on_submit {
                         text.clear();
                     }
-                    commands.entity(entity).trigger(|entity| SubmittedText {
-                        entity,
-                        text: text.0.clone(),
-                    });
                 }
                 (Key::Backspace, _) => {
                     if text.is_empty() {

@@ -16,6 +16,7 @@ pub fn create_ui(mut commands: Commands) {
                 width: px(500),
                 height: px(250),
                 border: UiRect::all(px(5)),
+                flex_direction: FlexDirection::Column,
                 ..default()
             },
             BorderRadius::all(px(5)),
@@ -23,7 +24,7 @@ pub fn create_ui(mut commands: Commands) {
             DragData(Vec2::ZERO),
             GlobalZIndex(i32::MAX), // forever render ontop, I worry this isn't passed down to children
             BackgroundColor(Color::BLACK.with_alpha(0.5)),
-            children![text_input_box()],
+            children![message_container(), text_input_box()],
         ))
         .observe(
             |on_drag_start: On<Pointer<DragStart>>,
@@ -70,5 +71,22 @@ pub fn text_input_box() -> impl Bundle {
             ..default()
         },
         BackgroundColor(Color::srgb(0.2, 0.2, 0.2)),
+    )
+}
+
+#[derive(Component, Reflect, Debug)]
+pub struct MessageContainer;
+
+pub fn message_container() -> impl Bundle {
+    (
+        MessageContainer,
+        Node {
+            width: percent(100),
+            height: percent(100),
+            align_self: AlignSelf::End,
+            flex_direction: FlexDirection::Column,
+            ..default()
+        },
+        //BackgroundColor(Color::srgb(1.0, 0.2, 0.2)),
     )
 }

@@ -1,55 +1,24 @@
-use bevy::{
-    log::{tracing_subscriber, tracing_subscriber::prelude::__tracing_subscriber_SubscriberExt},
-    prelude::*,
-};
-use crossbeam::channel::{Receiver, Sender};
+use bevy::prelude::*;
+
+use crate::input::SubmittedText;
 
 mod input;
-mod logging;
+pub mod logging;
+mod message;
 mod ui;
 
 pub struct ConsolePlugin;
 
 impl Plugin for ConsolePlugin {
     fn build(&self, app: &mut App) {
-        let (s, r) = crossbeam::channel::unbounded::<String>();
-        let subscriber = tracing_subscriber::registry().with(ConsoleLayer(s));
-        tracing::subscriber::set_global_default(subscriber)
-            .expect("setting default subscriber failed");
-        app.insert_resource(ConsoleReciever(r));
         app.add_systems(Startup, ui::create_ui);
-        app.add_systems(Update, input::handle_selected_boxes);
-    }
-}
-
-#[derive(Resource)]
-pub struct ConsoleReciever(Receiver<String>);
-
-struct ConsoleLayer(Sender<String>);
-
-impl<S> tracing_subscriber::Layer<S> for ConsoleLayer
-where
-    S: tracing::Subscriber,
-{
-    fn on_event(&self, event: &tracing::Event, _: tracing_subscriber::layer::Context<S>) {
-        let mut visitor = ConsoleVisitor::default();
-        event.record(&mut visitor);
-        let msg = format!("[{}] {}", event.metadata().level(), visitor.message);
-        let _ = self.0.send(msg);
-    }
-}
-
-#[derive(Default)]
-struct ConsoleVisitor {
-    message: String,
-}
-
-impl tracing::field::Visit for ConsoleVisitor {
-    fn record_debug(&mut self, field: &tracing::field::Field, value: &dyn std::fmt::Debug) {
-        // This gets called for each field in the event
-        if field.name() == "message" {
-            // Found the message field, extract it
-            self.message = format!("{:?}", value);
-        }
+        app.add_systems(
+            Update,
+            (
+                input::handle_selected_boxes,
+                message::receive_traced_message,
+            ),
+        );
+        app.add_observer(|on_submit: On<SubmittedText>| info!("Submitted: {}", on_submit.text));
     }
 }

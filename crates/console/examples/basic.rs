@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{log::LogPlugin, prelude::*};
 use console::ConsolePlugin;
 use purple::*;
 
