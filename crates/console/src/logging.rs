@@ -1,25 +1,25 @@
+//! Custom [LogPlugin](bevy::log::LogPlugin) functionality.
+
+use bevy::log::BoxedLayer;
+use bevy::prelude::*;
+use crossbeam::channel::{Receiver, Sender};
+
 use bevy::{
     log::{tracing_subscriber, tracing_subscriber::prelude::__tracing_subscriber_SubscriberExt},
     prelude::*,
 };
-use crossbeam::channel::{Receiver, Sender};
 
-mod input;
-mod logging;
-mod ui;
+/// A function that implements the log reading functionality for the
+/// developer console via [`LogPlugin::custom_layer`](bevy::log::LogPlugin::custom_layer).
+pub fn custom_log_layer(app: &mut App) -> Option<BoxedLayer> {
+    Some(Box::new(create_custom_log_layer(app)))
+}
 
-pub struct ConsolePlugin;
+fn create_custom_log_layer(app: &mut App) -> BoxedLayer {
+    let (sender, receiver) = crossbeam::channel::unbounded();
+    app.insert_resource(ConsoleReciever(receiver));
 
-impl Plugin for ConsolePlugin {
-    fn build(&self, app: &mut App) {
-        let (s, r) = crossbeam::channel::unbounded::<String>();
-        let subscriber = tracing_subscriber::registry().with(ConsoleLayer(s));
-        tracing::subscriber::set_global_default(subscriber)
-            .expect("setting default subscriber failed");
-        app.insert_resource(ConsoleReciever(r));
-        app.add_systems(Startup, ui::create_ui);
-        app.add_systems(Update, input::handle_selected_boxes);
-    }
+    Box::new(ConsoleLayer(sender))
 }
 
 #[derive(Resource)]

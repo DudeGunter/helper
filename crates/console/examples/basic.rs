@@ -4,7 +4,14 @@ use purple::*;
 
 fn main() {
     App::new()
-        .add_plugins((DefaultPlugins, ConsolePlugin, PurplePlugin))
+        .add_plugins((
+            DefaultPlugins.set(LogPlugin {
+                custom_layer: console::logging::custom_log_layer,
+                ..default()
+            }),
+            ConsolePlugin,
+            PurplePlugin,
+        ))
         .add_systems(Startup, spawn_camera)
         .run();
 }
