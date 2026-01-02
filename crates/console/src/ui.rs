@@ -15,8 +15,10 @@ pub fn create_ui(mut commands: Commands) {
             Node {
                 width: px(500),
                 height: px(250),
-                border: UiRect::all(px(5)),
-                flex_direction: FlexDirection::Column,
+                border: UiRect::all(px(2)),
+                flex_direction: FlexDirection::ColumnReverse,
+                overflow: Overflow::clip_y(),
+                //justify_content: JustifyContent::FlexEnd,
                 ..default()
             },
             BorderRadius::all(px(5)),
@@ -24,7 +26,7 @@ pub fn create_ui(mut commands: Commands) {
             DragData(Vec2::ZERO),
             GlobalZIndex(i32::MAX), // forever render ontop, I worry this isn't passed down to children
             BackgroundColor(Color::BLACK.with_alpha(0.5)),
-            children![message_container(), text_input_box()],
+            children![text_input_box(), message_container(),],
         ))
         .observe(
             |on_drag_start: On<Pointer<DragStart>>,
@@ -67,7 +69,9 @@ pub fn text_input_box() -> impl Bundle {
         Node {
             width: percent(100),
             height: px(24),
-            align_self: AlignSelf::End,
+            flex_grow: 0.0,   // Don't expand
+            flex_shrink: 0.0, // Don't shrink
+            flex_basis: Val::Px(24.0),
             ..default()
         },
         BackgroundColor(Color::srgb(0.2, 0.2, 0.2)),
@@ -82,11 +86,14 @@ pub fn message_container() -> impl Bundle {
         MessageContainer,
         Node {
             width: percent(100),
-            height: percent(100),
-            align_self: AlignSelf::End,
+            flex_grow: 1.0, // Expand to fill space
+            //flex_shrink: 1.0, // Allow shrinking
+            //flex_basis: px(0), // flex-basis: 0
+            //min_height: px(0),
             flex_direction: FlexDirection::Column,
+            overflow: Overflow::clip_y(),
             ..default()
         },
-        //BackgroundColor(Color::srgb(1.0, 0.2, 0.2)),
+        ScrollPosition::default(),
     )
 }

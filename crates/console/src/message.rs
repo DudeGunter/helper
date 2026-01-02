@@ -1,8 +1,5 @@
 use bevy::{
-    color::palettes::{
-        css::{WHITE, WHITE_SMOKE},
-        tailwind::*,
-    },
+    color::palettes::{css::*, tailwind::*},
     prelude::*,
 };
 
@@ -13,14 +10,14 @@ pub struct Message;
 
 pub fn receive_traced_message(
     mut commands: Commands,
-    container: Query<Entity, With<MessageContainer>>,
+    container: Query<(Entity, &mut ScrollPosition), With<MessageContainer>>,
     traced_messages: ResMut<TracingReceiver>,
 ) {
-    if let Ok(entity) = container.single_inner() {
+    if let Ok((entity, mut scroll)) = container.single_inner() {
         let mut new_messages: Vec<Entity> = Vec::new();
         while let Ok(trace) = traced_messages.try_recv() {
-            let info = span(trace.level, GREEN_600);
-            let path = span(trace.target, BLUE_600);
+            let info = span(trace.level + " ", GREEN_600);
+            let path = span(trace.target + ": ", BLUE_600);
             let message = span(trace.message, WHITE_SMOKE);
             let message = commands
                 .spawn((
@@ -33,6 +30,7 @@ pub fn receive_traced_message(
             new_messages.push(message);
         }
         commands.entity(entity).add_children(&new_messages);
+        scroll.y = f32::MAX; // Scrolls to bottom
     }
 }
 
