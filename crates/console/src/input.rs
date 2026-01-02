@@ -1,9 +1,11 @@
 use bevy::{
+    ecs::{lifecycle::HookContext, world::DeferredWorld},
     input::keyboard::{Key, KeyboardInput},
     prelude::*,
 };
 
 #[derive(Component, Reflect, Debug)]
+#[component(on_add = Self::on_add)]
 #[require(Node, Text)]
 pub struct TextInputBox {
     clear_on_submit: bool,
@@ -14,6 +16,16 @@ impl Default for TextInputBox {
         Self {
             clear_on_submit: true,
         }
+    }
+}
+
+impl TextInputBox {
+    fn on_add(mut world: DeferredWorld, context: HookContext) {
+        world
+            .commands()
+            .entity(context.entity)
+            .observe(select_text_input_box)
+            .observe(unselect_text_input_box);
     }
 }
 

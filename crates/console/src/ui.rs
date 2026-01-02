@@ -9,11 +9,6 @@ pub struct ConsoleUI;
 pub struct DragData(Vec2);
 
 pub fn create_ui(mut commands: Commands) {
-    let text_input_entity = commands
-        .spawn(text_input_box())
-        .observe(select_text_input_box)
-        .observe(unselect_text_input_box)
-        .id();
     commands
         .spawn((
             ConsoleUI,
@@ -28,8 +23,8 @@ pub fn create_ui(mut commands: Commands) {
             DragData(Vec2::ZERO),
             //GlobalZIndex(i32::MAX), // forever render ontop, I worry this isn't passed down to children
             BackgroundColor(Color::BLACK.with_alpha(0.5)),
+            children![text_input_box()],
         ))
-        .add_child(text_input_entity)
         .observe(
             |on_drag_start: On<Pointer<DragStart>>,
              mut drag_query: Query<&mut DragData>,
