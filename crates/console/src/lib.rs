@@ -19,6 +19,6 @@ impl Plugin for ConsolePlugin {
                 message::receive_traced_message,
             ),
         );
-        app.add_observer(|on_submit: On<SubmittedText>| info!("Submitted: {}", on_submit.text));
+        app.add_observer(|on_submit: On<SubmittedText>| info!("{}", on_submit.text));
     }
 }

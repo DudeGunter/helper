@@ -1,8 +1,6 @@
-//! Custom [LogPlugin](bevy::log::LogPlugin) functionality.
-
-use bevy::log::BoxedLayer;
-use bevy::prelude::*;
+use bevy::{color::palettes::css::*, log::BoxedLayer, prelude::*};
 use crossbeam::channel::{Receiver, Sender};
+use tracing::Level;
 
 use bevy::log::tracing_subscriber;
 
@@ -21,7 +19,7 @@ fn create_custom_log_layer(app: &mut App) -> BoxedLayer {
 
 #[derive(Debug)]
 pub struct TraceMessage {
-    pub level: String,
+    pub level: Level,
     pub target: String,
     pub message: String,
 }
@@ -47,7 +45,7 @@ where
         let target = event.metadata().target();
 
         let _ = self.0.send(TraceMessage {
-            level: level.to_string(),
+            level: level,
             target: target.to_string(),
             message: visitor.message,
         });
@@ -64,5 +62,21 @@ impl tracing::field::Visit for ConsoleVisitor {
         if field.name() == "message" {
             self.message = format!("{:?}", value).trim_matches('"').to_string();
         }
+    }
+}
+
+pub trait GetColor {
+    fn get_color(&self) -> Color;
+}
+
+impl GetColor for Level {
+    fn get_color(&self) -> Color {
+        Color::from(match *self {
+            Level::ERROR => RED,
+            Level::WARN => YELLOW,
+            Level::INFO => GREEN,
+            Level::DEBUG => GRAY,
+            Level::TRACE => DARK_GRAY,
+        })
     }
 }

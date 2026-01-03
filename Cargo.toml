@@ -3,8 +3,8 @@ resolver = "3"
 members = ["crates/*"]
 
 
-[workspace.dependencies]
-bevy = "0.17"
+[workspace.dependencies.bevy]
+version = "0.17"
 
 [workspace.dependencies.tracing]
 version = "0.1"

@@ -1,6 +1,8 @@
 use crate::input::*;
 use bevy::prelude::*;
 
+pub const CONSOLE_FONT_SIZE: f32 = 16.0;
+
 #[derive(Component)]
 pub struct ConsoleUI;
 
@@ -13,16 +15,15 @@ pub fn create_ui(mut commands: Commands) {
         .spawn((
             ConsoleUI,
             Node {
-                width: px(500),
+                width: px(750),
                 height: px(250),
                 border: UiRect::all(px(2)),
                 flex_direction: FlexDirection::ColumnReverse,
                 overflow: Overflow::clip_y(),
-                //justify_content: JustifyContent::FlexEnd,
                 ..default()
             },
             BorderRadius::all(px(5)),
-            BorderColor::all(Color::srgba(0.4, 0.4, 0.4, 0.6)),
+            BorderColor::all(Color::BLACK.with_alpha(0.5)),
             DragData(Vec2::ZERO),
             GlobalZIndex(i32::MAX), // forever render ontop, I worry this isn't passed down to children
             BackgroundColor(Color::BLACK.with_alpha(0.5)),
@@ -66,15 +67,18 @@ pub fn create_ui(mut commands: Commands) {
 pub fn text_input_box() -> impl Bundle {
     (
         TextInputBox::default(),
-        Node {
-            width: percent(100),
-            height: px(24),
-            flex_grow: 0.0,   // Don't expand
-            flex_shrink: 0.0, // Don't shrink
-            flex_basis: Val::Px(24.0),
+        TextFont {
+            font_size: CONSOLE_FONT_SIZE,
             ..default()
         },
-        BackgroundColor(Color::srgb(0.2, 0.2, 0.2)),
+        Node {
+            width: percent(100),
+            flex_grow: 0.0,   // Don't expand
+            flex_shrink: 0.0, // Don't shrink
+            flex_basis: px(CONSOLE_FONT_SIZE + 2.0),
+            ..default()
+        },
+        BackgroundColor(Color::BLACK.with_alpha(0.38)),
     )
 }
 
@@ -87,13 +91,9 @@ pub fn message_container() -> impl Bundle {
         Node {
             width: percent(100),
             flex_grow: 1.0, // Expand to fill space
-            //flex_shrink: 1.0, // Allow shrinking
-            //flex_basis: px(0), // flex-basis: 0
-            //min_height: px(0),
             flex_direction: FlexDirection::Column,
             overflow: Overflow::clip_y(),
             ..default()
         },
-        ScrollPosition::default(),
     )
 }

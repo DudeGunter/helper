@@ -8,6 +8,7 @@ bevy.workspace = true
 tracing.workspace = true
 crossbeam = "0.8"
 
+# example dependencies
 [dev-dependencies]
 purple = { path = "../purple" }
 
