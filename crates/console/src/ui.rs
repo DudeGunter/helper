@@ -1,12 +1,13 @@
 use crate::input::*;
 use bevy::prelude::*;
 
-pub const CONSOLE_FONT_SIZE: f32 = 16.0;
+pub const CONSOLE_FONT_SIZE: f32 = 12.0;
 
 #[derive(Component)]
 pub struct ConsoleUI;
 
 /// Needed to handle drag events
+/// This could be branched off into a separate crate/component
 #[derive(Component)]
 pub struct DragData(Vec2);
 
