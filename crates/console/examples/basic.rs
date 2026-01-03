@@ -1,12 +1,12 @@
-use bevy::{log::LogPlugin, prelude::*};
-use console::ConsolePlugin;
+use bevy::prelude::*;
+use console::prelude::*;
 use purple::*;
 
 fn main() {
     App::new()
         .add_plugins((
             DefaultPlugins.set(LogPlugin {
-                custom_layer: console::logging::custom_log_layer,
+                custom_layer: custom_log_layer,
                 ..default()
             }),
             ConsolePlugin,
