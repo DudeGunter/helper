@@ -9,7 +9,7 @@ use crate::{
 };
 
 #[derive(Component)]
-pub struct Message;
+pub struct ConsoleMessage;
 
 pub fn receive_traced_message(
     mut commands: Commands,
@@ -24,7 +24,7 @@ pub fn receive_traced_message(
             let message = span(trace.message, WHITE_SMOKE);
             let message = commands
                 .spawn((
-                    Message,
+                    ConsoleMessage,
                     Text::default(),
                     Node::default(),
                     children![info, path, message],
