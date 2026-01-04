@@ -1,6 +1,6 @@
-use bevy::prelude::*;
+use bevy::{ecs::system::SystemId, platform::collections::HashMap, prelude::*};
 
-use crate::commands::Commands;
+use crate::commands::{CommandMetadata, Commands};
 
 mod commands;
 mod input;
@@ -28,7 +28,7 @@ pub struct ConsolePlugin;
 
 impl Plugin for ConsolePlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<commands::ConsoleCommands>();
+        app.init_resource::<ConsoleConfig>();
         app.add_systems(Startup, (ui::create_ui, commands::collect_commands));
         app.add_systems(
             Update,
@@ -40,17 +40,48 @@ impl Plugin for ConsolePlugin {
         app.add_observer(commands::run_submitted_commands);
 
         // Default commands
-        app.insert_command(
-            commands::Command {
+        app.insert_command_with_name(
+            "help",
+            commands::CommandMetadata {
                 callable_name: "help".to_string(),
-                description: "Display help information".to_string(),
+                description: "Display helpful information about different commands".to_string(),
+                usage: "help [command]".to_string(),
             },
             commands::help::help,
         );
     }
 }
 
+/// Console configuration resource
+/// Houses the command references
+#[derive(Resource)]
+pub struct ConsoleConfig {
+    pub open_close_key: KeyCode,
+    // this shouldn't be edited (probably idk) manually
+    pub(crate) commands: HashMap<String, (CommandMetadata, SystemId<In<String>>)>,
+}
+
+impl Default for ConsoleConfig {
+    fn default() -> Self {
+        Self {
+            open_close_key: KeyCode::KeyT,
+            commands: HashMap::default(),
+        }
+    }
+}
+
+impl ConsoleConfig {
+    pub fn get_commands(&self) -> Vec<&String> {
+        self.commands.keys().collect()
+    }
+
+    pub fn get_metadata(&self, command: &str) -> Option<&CommandMetadata> {
+        self.commands.get(command).map(|(metadata, _)| metadata)
+    }
+}
+
 pub mod prelude {
+    pub use crate::ConsoleConfig;
     pub use crate::ConsolePlugin;
     pub use crate::logging::custom_log_layer;
     pub use bevy::log::LogPlugin;

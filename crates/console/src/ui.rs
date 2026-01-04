@@ -17,7 +17,7 @@ pub fn create_ui(mut commands: Commands) {
             ConsoleUI,
             Node {
                 width: px(750),
-                height: px(250),
+                height: px(600),
                 border: UiRect::all(px(2)),
                 flex_direction: FlexDirection::ColumnReverse,
                 overflow: Overflow::clip_y(),
