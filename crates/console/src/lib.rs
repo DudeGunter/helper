@@ -8,6 +8,7 @@ mod logging;
 mod message;
 mod parser;
 mod ui;
+// todo! the file structure could be more conservative
 
 /// The Plugin that implements the log reading functionality for the
 /// developer console via [`LogPlugin::custom_layer`](bevy::log::LogPlugin::custom_layer).
