@@ -39,6 +39,7 @@ impl Plugin for ConsolePlugin {
             ),
         );
         app.add_observer(commands::run_submitted_commands);
+        app.add_observer(message::handle_custom_messages);
 
         // Default commands
         app.insert_command_with_name(
