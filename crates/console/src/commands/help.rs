@@ -6,9 +6,10 @@ pub fn help(In(arguments): In<String>, config: Res<ConsoleConfig>) {
     let commands = config.get_commands();
 
     for command in commands {
-        let metadata = config.get_metadata(command).unwrap();
         info!("Command: {}", command);
-        info!("Description: {}", metadata.description);
-        info!("Usage: {}", metadata.usage);
+        if let Some(metadata) = config.get_metadata(command) {
+            info!("Description: {}", metadata.description);
+            info!("Usage: {}", metadata.usage);
+        }
     }
 }

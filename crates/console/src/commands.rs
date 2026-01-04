@@ -7,34 +7,23 @@ pub mod help;
 #[derive(Component)]
 pub struct CommandToCollect {
     name: String,
-    metadata: CommandMetadata,
+    metadata: Option<CommandMetadata>,
     system: SystemId<In<String>>,
 }
 
 #[derive(Reflect, Clone)]
 pub struct CommandMetadata {
-    pub callable_name: String,
     pub description: String,
     // todo! decide wether to make this a struct with a patern of some sort with
     // integrated parsing (if that make sense) possible use clap?
     pub usage: String,
 }
 
-impl CommandMetadata {
-    pub fn new<S: Into<String>>(callable_name: S) -> Self {
-        Self {
-            callable_name: callable_name.into(),
-            description: String::new(),
-            usage: String::new(),
-        }
-    }
-}
-
 pub trait Commands {
     #![allow(unused)]
-    fn insert_command<M: 'static>(
+    fn insert_command<S: Into<String>, M: 'static>(
         &mut self,
-        command: CommandMetadata,
+        name: S,
         system: impl IntoSystem<In<String>, (), M> + Send + Sync + 'static,
     );
 
@@ -47,17 +36,17 @@ pub trait Commands {
 }
 
 impl Commands for App {
-    fn insert_command<M: 'static>(
+    fn insert_command<S: Into<String>, M: 'static>(
         &mut self,
-        command: CommandMetadata,
+        name: S,
         system: impl IntoSystem<In<String>, (), M> + Send + Sync + 'static,
     ) {
         let world = self.world_mut();
         let system = world.register_system(system);
         // Instead, we spawn a component to be collected on startup
         world.spawn(CommandToCollect {
-            name: command.callable_name.clone(),
-            metadata: command,
+            name: name.into(),
+            metadata: None,
             system,
         });
     }
@@ -73,7 +62,7 @@ impl Commands for App {
         // Instead, we spawn a component to be collected on startup
         world.spawn(CommandToCollect {
             name: name.into(),
-            metadata: command,
+            metadata: Some(command),
             system,
         });
     }
@@ -102,6 +91,6 @@ pub fn run_submitted_commands(
     if let Some((_command, system)) = console.commands.get(command_name) {
         commands.run_system_with(*system, arguments.to_string());
     } else {
-        error!("Command not found: {}", command_name);
+        warn!("Command not found: {}", command_name);
     }
 }

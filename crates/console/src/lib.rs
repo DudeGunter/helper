@@ -42,14 +42,13 @@ impl Plugin for ConsolePlugin {
         // Default commands
         app.insert_command_with_name(
             "help",
-            commands::CommandMetadata {
-                callable_name: "help".to_string(),
+            CommandMetadata {
                 description: "Display helpful information about different commands".to_string(),
                 usage: "help [command]".to_string(),
             },
             commands::help::help,
         );
-        app.insert_command(CommandMetadata::new("clear"), commands::clear::clear);
+        app.insert_command("clear", commands::clear::clear);
     }
 }
 
@@ -59,7 +58,7 @@ impl Plugin for ConsolePlugin {
 pub struct ConsoleConfig {
     pub open_close_key: KeyCode,
     // this shouldn't be edited (probably idk) manually
-    pub(crate) commands: HashMap<String, (CommandMetadata, SystemId<In<String>>)>,
+    pub(crate) commands: HashMap<String, (Option<CommandMetadata>, SystemId<In<String>>)>,
 }
 
 impl Default for ConsoleConfig {
@@ -76,8 +75,12 @@ impl ConsoleConfig {
         self.commands.keys().collect()
     }
 
-    pub fn get_metadata(&self, command: &str) -> Option<&CommandMetadata> {
-        self.commands.get(command).map(|(metadata, _)| metadata)
+    pub fn get_metadata(&self, command: &str) -> Option<CommandMetadata> {
+        self.commands
+            .get(command)
+            .map(|(metadata, _)| metadata)
+            .unwrap_or(&None)
+            .clone()
     }
 }
 
