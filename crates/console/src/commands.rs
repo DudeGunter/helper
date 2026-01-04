@@ -1,6 +1,7 @@
 use crate::{ConsoleConfig, input::SubmittedText};
 use bevy::{ecs::system::SystemId, prelude::*};
 
+pub mod clear;
 pub mod help;
 
 #[derive(Component)]
@@ -17,6 +18,16 @@ pub struct CommandMetadata {
     // todo! decide wether to make this a struct with a patern of some sort with
     // integrated parsing (if that make sense) possible use clap?
     pub usage: String,
+}
+
+impl CommandMetadata {
+    pub fn new<S: Into<String>>(callable_name: S) -> Self {
+        Self {
+            callable_name: callable_name.into(),
+            description: String::new(),
+            usage: String::new(),
+        }
+    }
 }
 
 pub trait Commands {
@@ -89,10 +100,6 @@ pub fn run_submitted_commands(
 ) {
     let (command_name, arguments) = on.text.split_once(' ').unwrap_or((on.text.as_str(), ""));
     if let Some((_command, system)) = console.commands.get(command_name) {
-        info!(
-            "Running command {} with the arguments: {}",
-            command_name, arguments
-        );
         commands.run_system_with(*system, arguments.to_string());
     } else {
         error!("Command not found: {}", command_name);

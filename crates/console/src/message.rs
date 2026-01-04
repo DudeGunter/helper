@@ -18,9 +18,9 @@ pub fn receive_traced_message(
     if let Ok(entity) = container.single_inner() {
         let mut new_messages: Vec<Entity> = Vec::new();
         while let Ok(trace) = traced_messages.try_recv() {
-            let time = trace.time.time().to_string();
+            let time = trace.time.time().to_string(); // todo! (not really) this formatting could be done better via chronos
             let formatted_time = &time[..time.len() - 7];
-            let time = span(formatted_time.to_owned() + " ", WHITE);
+            let time = span(formatted_time.to_owned() + " ", GRAY_300);
             let info = span(trace.level.to_string() + " ", trace.level.get_color());
             let path = span(trace.target + ": ", BLUE_600);
             let message = span(trace.message, WHITE_SMOKE);

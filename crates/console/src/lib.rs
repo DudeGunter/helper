@@ -49,6 +49,7 @@ impl Plugin for ConsolePlugin {
             },
             commands::help::help,
         );
+        app.insert_command(CommandMetadata::new("clear"), commands::clear::clear);
     }
 }
 
