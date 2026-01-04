@@ -71,5 +71,7 @@ pub fn run_submitted_commands(
             command_name, arguments
         );
         commands.run_system_with(*system, arguments.to_string());
+    } else {
+        error!("Command not found: {}", command_name);
     }
 }

@@ -1,3 +1,4 @@
+#![allow(unused)]
 use std::str::FromStr;
 
 /// Parse a single type from string

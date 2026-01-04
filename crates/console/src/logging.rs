@@ -1,8 +1,11 @@
-use bevy::{color::palettes::css::*, log::BoxedLayer, prelude::*};
+use bevy::{
+    color::palettes::css::*,
+    log::{BoxedLayer, tracing_subscriber},
+    prelude::*,
+};
+use chrono::{DateTime, Local};
 use crossbeam::channel::{Receiver, Sender};
 use tracing::Level;
-
-use bevy::log::tracing_subscriber;
 
 /// A function that implements the log reading functionality for the
 /// developer console via [`LogPlugin::custom_layer`](bevy::log::LogPlugin::custom_layer).
@@ -31,6 +34,7 @@ fn create_custom_log_layer(app: &mut App) -> BoxedLayer {
 
 #[derive(Debug)]
 pub struct TraceMessage {
+    pub time: DateTime<Local>,
     pub level: Level,
     pub target: String,
     pub message: String,
@@ -52,13 +56,14 @@ where
     ) {
         let mut visitor = ConsoleVisitor::default();
         event.record(&mut visitor);
-
+        let time = Local::now(); // need to compare
         let level = *event.metadata().level();
-        let target = event.metadata().target();
+        let target = event.metadata().target().to_string();
 
         let _ = self.0.send(TraceMessage {
-            level: level,
-            target: target.to_string(),
+            time,
+            level,
+            target,
             message: visitor.message,
         });
     }

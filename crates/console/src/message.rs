@@ -1,11 +1,10 @@
-use bevy::{
-    color::palettes::{css::*, tailwind::*},
-    prelude::*,
-};
-
 use crate::{
     logging::{GetColor, TracingReceiver},
     ui::MessageContainer,
+};
+use bevy::{
+    color::palettes::{css::*, tailwind::*},
+    prelude::*,
 };
 
 #[derive(Component)]
@@ -19,6 +18,9 @@ pub fn receive_traced_message(
     if let Ok(entity) = container.single_inner() {
         let mut new_messages: Vec<Entity> = Vec::new();
         while let Ok(trace) = traced_messages.try_recv() {
+            let time = trace.time.time().to_string();
+            let formatted_time = &time[..time.len() - 7];
+            let time = span(formatted_time.to_owned() + " ", WHITE);
             let info = span(trace.level.to_string() + " ", trace.level.get_color());
             let path = span(trace.target + ": ", BLUE_600);
             let message = span(trace.message, WHITE_SMOKE);
@@ -27,7 +29,7 @@ pub fn receive_traced_message(
                     ConsoleMessage,
                     Text::default(),
                     Node::default(),
-                    children![info, path, message],
+                    children![time, info, path, message],
                 ))
                 .id();
             new_messages.push(message);
