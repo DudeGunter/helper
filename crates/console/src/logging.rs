@@ -72,12 +72,19 @@ where
 #[derive(Default)]
 struct ConsoleVisitor {
     message: String,
+    custom: bool,
 }
 
 impl tracing::field::Visit for ConsoleVisitor {
     fn record_debug(&mut self, field: &tracing::field::Field, value: &dyn std::fmt::Debug) {
         if field.name() == "message" {
             self.message = format!("{:?}", value).trim_matches('"').to_string();
+        }
+    }
+
+    fn record_bool(&mut self, field: &tracing::field::Field, value: bool) {
+        if field.name() == "custom" {
+            self.custom = value;
         }
     }
 }
