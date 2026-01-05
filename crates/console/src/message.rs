@@ -82,7 +82,7 @@ pub struct CustomMessage(Vec<Span>);
 
 impl CustomMessage {
     /// Redundent, use the simple! macro
-    pub fn simple<S: Into<String>>(text: S) -> Self {
+    pub fn _simple<S: Into<String>>(text: S) -> Self {
         Self(vec![Span {
             text: text.into(),
             ..default()

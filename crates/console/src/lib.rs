@@ -46,11 +46,12 @@ impl Plugin for ConsolePlugin {
             "help",
             CommandMetadata {
                 description: "Display helpful information about different commands".to_string(),
-                usage: "help [command]".to_string(),
+                usage: "help".to_string(),
             },
             commands::help::help,
         );
         app.insert_command("clear", commands::clear::clear);
+        app.insert_command("quit", commands::quit::quit);
     }
 }
 

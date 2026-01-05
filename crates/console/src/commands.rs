@@ -3,6 +3,7 @@ use bevy::{ecs::system::SystemId, prelude::*};
 
 pub mod clear;
 pub mod help;
+pub mod quit;
 
 #[derive(Component)]
 pub struct CommandToCollect {
