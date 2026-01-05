@@ -1,22 +1,14 @@
-use crate::message::CustomMessage;
 use crate::prelude::*;
 use bevy::prelude::*;
 
-pub fn help(In(_arguments): In<String>, mut commands: Commands, config: Res<ConsoleConfig>) {
+pub fn help(In(_arguments): In<String>, config: Res<ConsoleConfig>) {
     let console_commands = config.get_commands();
 
     for command in console_commands {
-        commands.trigger(CustomMessage::simple(command));
-        info!(custom = true, "hello");
+        simple!("{}", command);
         if let Some(metadata) = config.get_metadata(command) {
-            commands.trigger(CustomMessage::simple(format!(
-                " >Description: {}",
-                metadata.description
-            )));
-            commands.trigger(CustomMessage::simple(format!(
-                " >Usage: {}",
-                metadata.usage
-            )));
+            simple!(" >Description: {}", metadata.description);
+            simple!(" >Usage: {}", metadata.usage);
         }
     }
 }

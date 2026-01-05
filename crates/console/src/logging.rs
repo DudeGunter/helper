@@ -38,6 +38,7 @@ pub struct TraceMessage {
     pub level: Level,
     pub target: String,
     pub message: String,
+    pub custom: bool,
 }
 
 #[derive(Resource, Deref, DerefMut)]
@@ -65,6 +66,7 @@ where
             level,
             target,
             message: visitor.message,
+            custom: visitor.custom,
         });
     }
 }

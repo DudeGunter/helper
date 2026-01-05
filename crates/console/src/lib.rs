@@ -90,5 +90,6 @@ pub mod prelude {
     pub use crate::ConsoleConfig;
     pub use crate::ConsolePlugin;
     pub use crate::logging::custom_log_layer;
+    pub use crate::simple;
     pub use bevy::log::LogPlugin;
 }
