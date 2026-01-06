@@ -1,5 +1,5 @@
 use bevy::{
-    ecs::{lifecycle::HookContext, world::DeferredWorld},
+    ecs::{lifecycle::HookContext, system::SystemParam, world::DeferredWorld},
     input::keyboard::{Key, KeyboardInput},
     prelude::*,
 };
@@ -92,4 +92,17 @@ fn is_printable_char(chr: char) -> bool {
         || ('\u{100000}'..='\u{10fffd}').contains(&chr);
 
     !is_in_private_use_area && !chr.is_ascii_control()
+}
+
+/// Checks if any box is selected.
+#[derive(SystemParam)]
+// The docs say that the lifetimes are needed (idc why)
+pub struct SelectedBoxCheck<'w, 's> {
+    select_check: Query<'w, 's, Entity, With<crate::input::SelectedBox>>,
+}
+
+impl<'w, 's> SelectedBoxCheck<'w, 's> {
+    pub fn any_selected(&self) -> bool {
+        self.select_check.is_empty()
+    }
 }

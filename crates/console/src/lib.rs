@@ -92,9 +92,9 @@ pub fn open_close_console(
     config: Res<ConsoleConfig>,
     input: Res<ButtonInput<KeyCode>>,
     mut query: Query<&mut Visibility, With<crate::ui::ConsoleUI>>,
-    select_check: Query<Entity, With<crate::input::SelectedBox>>,
+    select_check: crate::input::SelectedBoxCheck,
 ) {
-    if !select_check.is_empty() {
+    if !select_check.any_selected() {
         // If a box is selected, don't open/close the console (key protection)
         return;
     }
