@@ -83,6 +83,9 @@ pub fn text_input_box() -> impl Bundle {
     )
 }
 
+/// Singleton container node for messages
+/// Children are different console messages or custom node blocks
+/// Console messages can be accessed by querying the `ConsoleMessage` component.
 #[derive(Component, Reflect, Debug)]
 pub struct MessageContainer;
 

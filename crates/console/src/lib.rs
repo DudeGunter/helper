@@ -36,6 +36,7 @@ impl Plugin for ConsolePlugin {
             (
                 input::handle_selected_boxes,
                 message::receive_traced_message,
+                open_close_console,
             ),
         );
         app.add_observer(commands::run_submitted_commands);
@@ -84,6 +85,28 @@ impl ConsoleConfig {
             .map(|(metadata, _)| metadata)
             .unwrap_or(&None)
             .clone()
+    }
+}
+
+pub fn open_close_console(
+    config: Res<ConsoleConfig>,
+    input: Res<ButtonInput<KeyCode>>,
+    mut query: Query<&mut Visibility, With<crate::ui::ConsoleUI>>,
+    select_check: Query<Entity, With<crate::input::SelectedBox>>,
+) {
+    if !select_check.is_empty() {
+        // If a box is selected, don't open/close the console (key protection)
+        return;
+    }
+
+    if input.just_pressed(config.open_close_key) {
+        if let Ok(mut visibility) = query.single_mut() {
+            *visibility = match *visibility {
+                Visibility::Hidden => Visibility::Visible,
+                Visibility::Visible => Visibility::Hidden,
+                _ => Visibility::Hidden,
+            };
+        }
     }
 }
 
