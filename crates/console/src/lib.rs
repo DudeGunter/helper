@@ -1,6 +1,6 @@
 use bevy::{ecs::system::SystemId, platform::collections::HashMap, prelude::*};
 
-use crate::commands::{CommandMetadata, Commands};
+use crate::commands::{CommandMetadata, ConsoleCommands};
 
 mod commands;
 mod input;
@@ -113,6 +113,7 @@ pub fn open_close_console(
 pub mod prelude {
     pub use crate::ConsoleConfig;
     pub use crate::ConsolePlugin;
+    pub use crate::commands::ConsoleCommands;
     pub use crate::logging::custom_log_layer;
     pub use crate::simple;
     pub use bevy::log::LogPlugin;

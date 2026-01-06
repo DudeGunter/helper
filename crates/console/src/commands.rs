@@ -20,28 +20,28 @@ pub struct CommandMetadata {
     pub usage: String,
 }
 
-pub trait Commands {
+pub trait ConsoleCommands {
     #![allow(unused)]
     fn insert_command<S: Into<String>, M: 'static>(
         &mut self,
         name: S,
         system: impl IntoSystem<In<String>, (), M> + Send + Sync + 'static,
-    );
+    ) -> &mut Self;
 
     fn insert_command_with_name<T: Into<String>, M: 'static>(
         &mut self,
         name: T,
         command: CommandMetadata,
         system: impl IntoSystem<In<String>, (), M> + Send + Sync + 'static,
-    );
+    ) -> &mut Self;
 }
 
-impl Commands for App {
+impl ConsoleCommands for App {
     fn insert_command<S: Into<String>, M: 'static>(
         &mut self,
         name: S,
         system: impl IntoSystem<In<String>, (), M> + Send + Sync + 'static,
-    ) {
+    ) -> &mut Self {
         let world = self.world_mut();
         let system = world.register_system(system);
         // Instead, we spawn a component to be collected on startup
@@ -50,6 +50,7 @@ impl Commands for App {
             metadata: None,
             system,
         });
+        self
     }
 
     fn insert_command_with_name<T: Into<String>, M: 'static>(
@@ -57,7 +58,7 @@ impl Commands for App {
         name: T,
         command: CommandMetadata,
         system: impl IntoSystem<In<String>, (), M> + Send + Sync + 'static,
-    ) {
+    ) -> &mut Self {
         let world = self.world_mut();
         let system = world.register_system(system);
         // Instead, we spawn a component to be collected on startup
@@ -66,6 +67,7 @@ impl Commands for App {
             metadata: Some(command),
             system,
         });
+        self
     }
 }
 
